@@ -1,0 +1,23 @@
+package com.tcs.airline.model;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import lombok.Data;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+@Data //@Data means thath you ara adding getters and setters with lombook dependency to all data inside
+@Entity
+public class Flights {
+    @Id
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
+    private int id;
+    //@Getter @Setter this is another form to use Loombok focusen on an especific elements
+    private String cityOrigin;
+    private String destination;
+    private LocalDateTime departureDateAndTime;
+    private BigDecimal price;
+}
