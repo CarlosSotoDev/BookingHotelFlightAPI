@@ -1,7 +1,3 @@
-¡Perfecto! Aquí te presento la **documentación completa** del sistema con las secciones necesarias, explicaciones y los
-códigos incluidos. Está estructurada para que tengas una visión clara de todo el proyecto.
-
----
 
 ## Documentación del Proyecto: Sistema de Reserva de Vuelos y Hoteles
 
