@@ -1,4 +1,3 @@
-
 ## Documentación del Proyecto: Sistema de Reserva de Vuelos y Hoteles
 
 ### 1. Introducción del Proyecto
@@ -10,6 +9,141 @@ creación, actualización, eliminación y consulta de vuelos y hoteles.
 El sistema está construido usando **Spring Boot** con **JPA** para la persistencia de datos y **Lombok** para reducir el
 código repetitivo. Los datos se almacenan en una base de datos relacional, como **MySQL** o **H2** (para propósitos de
 prueba).
+
+Aquí tienes la estructura de la documentación con el nuevo punto "Preparación de docker-compose.yml" entre los puntos 1
+y 2:
+
+---
+
+### 1.1 Preparación de docker-compose.yml
+
+El archivo `docker-compose.yml` es esencial para orquestar los servicios de la aplicación y la base de datos en
+contenedores Docker. A continuación se presenta un ejemplo de cómo configurar el archivo `docker-compose.yml` para
+implementar PostgreSQL como base de datos y la aplicación Spring Boot.
+
+#### Ejemplo de `docker-compose.yml`:
+
+```yaml
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:13
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: airline_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    image: mi-aplicacion-spring-boot
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/airline_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    ports:
+      - "8080:8080"
+    networks:
+      - spring-postgres-network
+
+networks:
+  spring-postgres-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+```
+
+### Explicación del archivo `docker-compose.yml`:
+
+- **postgres**: Servicio que utiliza la imagen oficial de PostgreSQL. Se configuran variables de entorno para el nombre
+  de usuario, contraseña y nombre de la base de datos.
+- **app**: Servicio para tu aplicación Spring Boot, que depende de PostgreSQL. Los detalles de la conexión a la base de
+  datos se especifican mediante variables de entorno que luego serán utilizadas en el archivo `application.properties`.
+- **Redes y Volúmenes**: Se define una red compartida para la comunicación entre los servicios, y un volumen para
+  persistir los datos de la base de datos.
+
+### Ejecución del contenedor:
+
+1. Abre la terminal local en el directorio donde está ubicado el archivo `docker-compose.yml`.
+2. Ejecuta el siguiente comando para construir y levantar los contenedores de la aplicación y PostgreSQL:
+
+```bash
+docker-compose up --build
+```
+
+Este comando construirá la imagen de Docker para la aplicación y levantará ambos contenedores. Posteriormente, se puede
+acceder a la base de datos PostgreSQL desde cualquier cliente, como **pgAdmin**.
+
+
+---
+Aquí tienes un nuevo punto en la documentación que explica la configuración de `application.properties`:
+
+---
+
+### 1.2 Configuración del application.properties
+
+El archivo `application.properties` es clave para configurar las propiedades de la aplicación Spring Boot, incluida la
+conexión a la base de datos PostgreSQL. A continuación, se detallan las configuraciones utilizadas para este proyecto.
+
+#### Contenido del archivo `application.properties`:
+
+```properties
+spring.application.name=airline-booking-system
+spring.datasource.url=jdbc:postgresql://localhost:5432/bookingHotelsAndFligths
+spring.datasource.username=user
+spring.datasource.password=12345678
+spring.datasource.hikari.connection-timeout=20000
+spring.datasource.hikari.maximum-pool-size=5
+logging.level.org.hibernate.SQL=DEBUG
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+```
+
+#### Explicación:
+
+1. **`spring.application.name=airline-booking-system`**:
+    - Define el nombre de la aplicación, en este caso, **airline-booking-system**. Este valor puede ser utilizado para
+      identificar la aplicación en diferentes contextos, como registros o sistemas de monitoreo.
+
+2. **`spring.datasource.url=jdbc:postgresql://localhost:5432/bookingHotelsAndFligths`**:
+    - Especifica la URL de conexión a la base de datos PostgreSQL, que está ubicada en `localhost` (servidor local),
+      utilizando el puerto `5432` y la base de datos llamada **bookingHotelsAndFligths**.
+
+3. **`spring.datasource.username=user`** y **`spring.datasource.password=12345678`**:
+    - Establecen las credenciales necesarias para conectarse a la base de datos PostgreSQL. En este caso, el nombre de
+      usuario es `user` y la contraseña es `12345678`.
+
+4. **`spring.datasource.hikari.connection-timeout=20000`**:
+    - Define el tiempo de espera máximo (en milisegundos) para obtener una conexión de la base de datos. En este caso,
+      el valor es **20,000 ms** (20 segundos). Si no se puede obtener una conexión en ese tiempo, se lanzará una
+      excepción.
+
+5. **`spring.datasource.hikari.maximum-pool-size=5`**:
+    - Configura el tamaño máximo del pool de conexiones. El valor de **5** significa que como máximo se mantendrán
+      abiertas 5 conexiones simultáneamente en el pool.
+
+6. **`logging.level.org.hibernate.SQL=DEBUG`**:
+    - Activa el registro (logging) de las consultas SQL que genera Hibernate. Con el nivel `DEBUG`, cada consulta SQL se
+      mostrará en los logs.
+
+7. **`logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE`**:
+    - Activa el registro detallado de la vinculación de parámetros SQL. Con el nivel `TRACE`, se registrará el valor
+      exacto que Hibernate está vinculando a cada parámetro SQL en las consultas.
+
+#### Conclusión:
+
+Este archivo de configuración permite establecer las conexiones necesarias para interactuar con la base de datos
+PostgreSQL, gestionar el pool de conexiones, y habilitar el registro detallado de las operaciones SQL ejecutadas por
+Hibernate. Esto es útil para monitorear y depurar la interacción entre la aplicación y la base de datos.
+
+---
 
 ### 2. Modelos
 

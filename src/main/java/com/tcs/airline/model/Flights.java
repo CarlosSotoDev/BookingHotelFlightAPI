@@ -4,13 +4,17 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.Data;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Entity(name = "flights")
 @Data //@Data means thath you ara adding getters and setters with lombook dependency to all data inside
-@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+
 public class Flights {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)

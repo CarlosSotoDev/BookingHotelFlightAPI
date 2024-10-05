@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+
+  db:
+    image: postgres:15.2
+    container_name: BookingSystem
+    restart: always
+    volumes:
+      - ./db/sql/create_schema.sql:/docker-entrypoint-initdb.d/create_schema.sql
+    environment:
+      - POSTGRES_DB=bookingHotelsAndFligths
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=12345678
+    ports:
+      - "5432:5432"
