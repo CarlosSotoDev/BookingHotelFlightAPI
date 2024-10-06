@@ -81,4 +81,44 @@ public class FlightsController {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
+
+    // Endpoint to retrieve a flight by its cityOrigin
+    @GetMapping("/city/{cityOrigin}")
+    public ResponseEntity<Flights> getFlightByCityOrigin(@PathVariable String cityOrigin) {
+        try {
+            // Call the service to retrieve the flight
+            Flights flight = flightsService.getFlightByCityOrigin(cityOrigin);
+            return new ResponseEntity<>(flight, HttpStatus.OK);
+        } catch (Exception e) {
+            // Return a not found response if flight does not exist
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Endpoint to retrieve a flight by its ID
+    @GetMapping("/destination/{destination}")
+    public ResponseEntity<Flights> getFlightByDestination(@PathVariable String destination) {
+        try {
+            // Call the service to retrieve the flight
+            Flights flight = flightsService.getFlightByDestination(destination);
+            return new ResponseEntity<>(flight, HttpStatus.OK);
+        } catch (Exception e) {
+            // Return a not found response if flight does not exist
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    // Endpoint to retrieve a flight by its Price
+    @GetMapping("/price/{price}")
+    public ResponseEntity<Flights> getFlightByPrice (@PathVariable BigDecimal price){
+        try {
+            // Call the service to retrieve the flight
+            Flights flight = flightsService.getFlightByPrice(price);
+            return new ResponseEntity<>(flight, HttpStatus.OK);
+        } catch (Exception e) {
+            // Return a not found response if flight does not exist
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
+
 }

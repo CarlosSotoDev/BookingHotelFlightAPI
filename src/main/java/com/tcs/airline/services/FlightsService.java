@@ -106,5 +106,32 @@ public class FlightsService {
 
     }
 
+    public Flights getFlightByCityOrigin(String cityOrigin) {
+        Optional<Flights> flight = flightRepository.findByCityOrigin(cityOrigin);
+        if(flight.isPresent()) {
+            return flight.get();
+        }else{
+            throw new RuntimeException("Flight with City Origin " + cityOrigin + " not found.");
+        }
+    }
+
+    public Flights getFlightByDestination(String destination) {
+        Optional<Flights> flight = flightRepository.findByDestination(destination);
+        if(flight.isPresent()) {
+            return flight.get();
+        }else{
+            throw new RuntimeException("Flight with City Origin " + destination + " not found.");
+        }
+    }
+
+    public Flights getFlightByPrice(BigDecimal price) {
+        Optional<Flights> flight = flightRepository.findByPrice(price);
+        if(flight.isPresent()) {
+            return flight.get();
+        }else{
+            throw new RuntimeException("Flight with City Origin " + price + " not found.");
+        }
+    }
+
 
 }

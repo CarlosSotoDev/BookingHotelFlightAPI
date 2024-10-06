@@ -89,4 +89,34 @@ public class HotelService {
         }
     }
 
+    //Finding Hotel By HotelName
+    public Hotel getHotelByHotelName(String hotelName) {
+        Optional<Hotel> hotel = hotelRepository.findByHotelName(hotelName);
+        if (hotel.isPresent()) {
+            return hotel.get();
+        } else {
+            throw new RuntimeException("Hotel with id " + hotelName + " not found");
+        }
+    }
+
+    //Finding Hotel By City
+    public Hotel getHotelByCity(String city) {
+        Optional<Hotel> hotel = hotelRepository.findByCity(city);
+        if (hotel.isPresent()) {
+            return hotel.get();
+        } else {
+            throw new RuntimeException("Hotel with id " + city + " not found");
+        }
+    }
+
+    //Finding Hotel By Price
+    public Hotel getHotelByPricePerNight(BigDecimal pricePerNight) {
+        Optional<Hotel> hotel = hotelRepository.findByPricePerNight(pricePerNight);
+        if (hotel.isPresent()) {
+            return hotel.get();
+        } else {
+            throw new RuntimeException("Hotel with id " + pricePerNight + " not found");
+        }
+    }
+
 }
