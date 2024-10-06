@@ -18,6 +18,22 @@ public class FlightsService {
     //Methods
     // CreateFlight
     public Flights createFlight(String cityOrigin, String destination, LocalDateTime departureDateAndTime, BigDecimal price) {
+        if (cityOrigin == null || cityOrigin == "" || cityOrigin.trim().isEmpty()) {
+            throw new IllegalArgumentException("City Origin field cannot be empty");
+        }
+
+        if (destination == null || destination == "" || destination.trim().isEmpty()) {
+            throw new IllegalArgumentException("Destination field cannot be empty");
+        }
+
+        if (departureDateAndTime == null) {
+            throw new IllegalArgumentException("DepartureDateAndTime field cannot be empty");
+        }
+
+        if (price == null || price.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new IllegalArgumentException("price cannot be empty");
+        }
+
         Flights flight = new Flights();
         flight.setCityOrigin(cityOrigin);
         flight.setDestination(destination);
@@ -50,6 +66,21 @@ public class FlightsService {
     public String updateFlight(int id, String cityOrigin, String destination, LocalDateTime departureDateAndTime, BigDecimal price) {
         Optional<Flights> flight = flightRepository.findById(id);
         if (flight.isPresent()) {
+            if (cityOrigin == null || cityOrigin == "" || cityOrigin.trim().isEmpty()) {
+                throw new IllegalArgumentException("City Origin field cannot be empty");
+            }
+
+            if (destination == null || destination == "" || destination.trim().isEmpty()) {
+                throw new IllegalArgumentException("Destination field cannot be empty");
+            }
+
+            if (departureDateAndTime == null) {
+                throw new IllegalArgumentException("DepartureDateAndTime field cannot be empty");
+            }
+
+            if (price == null || price.compareTo(BigDecimal.ZERO) <= 0) {
+                throw new IllegalArgumentException("price cannot be empty");
+            }
             Flights existingFlight = flight.get();
             existingFlight.setCityOrigin(cityOrigin);
             existingFlight.setDestination(destination);
@@ -57,7 +88,7 @@ public class FlightsService {
             existingFlight.setPrice(price);
             flightRepository.save(existingFlight);
             return "Flight with ID " + id + " successfully updated.";
-        }else{
+        } else {
             return "Flight with ID " + id + " not found.";
         }
 
@@ -69,7 +100,7 @@ public class FlightsService {
         Optional<Flights> flight = flightRepository.findById(id);
         if (flight.isPresent()) {
             return flight.get();
-        }else{
+        } else {
             throw new RuntimeException("Flight with ID " + id + " not found.");
         }
 
