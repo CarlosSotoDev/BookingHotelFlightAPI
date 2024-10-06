@@ -10,9 +10,6 @@ El sistema está construido usando **Spring Boot** con **JPA** para la persisten
 código repetitivo. Los datos se almacenan en una base de datos relacional, como **MySQL** o **H2** (para propósitos de
 prueba).
 
-Aquí tienes la estructura de la documentación con el nuevo punto "Preparación de docker-compose.yml" entre los puntos 1
-y 2:
-
 ---
 
 ### 1.1 Preparación de docker-compose.yml
