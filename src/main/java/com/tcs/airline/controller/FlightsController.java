@@ -8,7 +8,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @RestController
 @RequestMapping("/api/v1/flights")
@@ -22,11 +24,12 @@ public class FlightsController {
     public ResponseEntity<Flights> createFlight(
             @RequestParam String cityOrigin,
             @RequestParam String destination,
-            @RequestParam LocalDateTime departureDateAndTime,
+            @RequestParam LocalDate departureDate,
+            @RequestParam LocalTime departureTime,
             @RequestParam BigDecimal price) {
         try {
             // Call the service to create the flight
-            Flights createdFlight = flightsService.createFlight(cityOrigin, destination, departureDateAndTime, price);
+            Flights createdFlight = flightsService.createFlight(cityOrigin, destination, departureDate, departureTime, price);
             return new ResponseEntity<>(createdFlight, HttpStatus.CREATED);
         } catch (Exception e) {
             // Return an error response in case of failure
@@ -53,11 +56,13 @@ public class FlightsController {
             @PathVariable int id,
             @RequestParam String cityOrigin,
             @RequestParam String destination,
-            @RequestParam LocalDateTime departureDateAndTime,
+            @RequestParam LocalDate departureDate,
+            @RequestParam LocalTime departureTime,
             @RequestParam BigDecimal price) {
         try {
             // Call the service to update the flight
-            String result = flightsService.updateFlight(id, cityOrigin, destination, departureDateAndTime, price);
+            String result = flightsService
+                    .updateFlight(id, cityOrigin, destination, departureDate,departureTime, price);
             if (result.contains("successfully updated")) {
                 return new ResponseEntity<>(result, HttpStatus.OK);
             } else {

@@ -2,7 +2,8 @@ CREATE TABLE flights (
                          id SERIAL PRIMARY KEY,
                          city_origin VARCHAR(255) NOT NULL,
                          destination VARCHAR(255) NOT NULL,
-                         departure_date_and_time TIMESTAMP NOT NULL,
+                         departure_date DATE NOT NULL,
+                         departure_time TIME NOT NULL,
                          price DECIMAL(10, 2) NOT NULL
 );
 
