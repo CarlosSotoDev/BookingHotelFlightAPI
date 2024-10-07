@@ -11,6 +11,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/flights")
@@ -62,7 +63,7 @@ public class FlightsController {
         try {
             // Call the service to update the flight
             String result = flightsService
-                    .updateFlight(id, cityOrigin, destination, departureDate,departureTime, price);
+                    .updateFlight(id, cityOrigin, destination, departureDate, departureTime, price);
             if (result.contains("successfully updated")) {
                 return new ResponseEntity<>(result, HttpStatus.OK);
             } else {
@@ -115,7 +116,7 @@ public class FlightsController {
 
     // Endpoint to retrieve a flight by its Price
     @GetMapping("/price/{price}")
-    public ResponseEntity<Flights> getFlightByPrice (@PathVariable BigDecimal price){
+    public ResponseEntity<Flights> getFlightByPrice(@PathVariable BigDecimal price) {
         try {
             // Call the service to retrieve the flight
             Flights flight = flightsService.getFlightByPrice(price);
@@ -123,6 +124,33 @@ public class FlightsController {
         } catch (Exception e) {
             // Return a not found response if flight does not exist
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
+
+    //SearchForm
+    //postman try http://localhost:8080/api/v1/flights/search?destination=Paris
+    @GetMapping("/search")
+    public ResponseEntity<List<Flights>> searchFlights(
+            @RequestParam(name = "cityOrigin", required = false) String cityOrigin,
+            @RequestParam(name = "destination", required = false) String destination,
+            @RequestParam(name = "departureDate", required = false) String departureDate,
+            @RequestParam(name = "departureTime", required = false) String departureTime,
+            @RequestParam(name = "price", required = false) BigDecimal price) {
+
+        try {
+            // Convertir Strings a LocalDate y LocalTime si no son nulos o vacíos
+            LocalDate date = (departureDate != null && !departureDate.isEmpty()) ? LocalDate.parse(departureDate) : null;
+            LocalTime time = (departureTime != null && !departureTime.isEmpty()) ? LocalTime.parse(departureTime) : null;
+
+            // Llamar al método del servicio para obtener los vuelos
+            List<Flights> flights = flightsService.searchFlights(cityOrigin, destination, date, time, price);
+
+            // Devolver la lista de vuelos en un ResponseEntity con estado 200 OK
+            return new ResponseEntity<>(flights, HttpStatus.OK);
+
+        } catch (Exception e) {
+            // Si ocurre un error, devolver un ResponseEntity con un estado 500 y el mensaje de error
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

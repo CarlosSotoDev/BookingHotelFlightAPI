@@ -2,14 +2,24 @@ package com.tcs.airline.services;
 
 import com.tcs.airline.model.Flights;
 import com.tcs.airline.repository.FlightRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.sql.init.dependency.DatabaseInitializationDependencyConfigurer;
+import org.springframework.data.util.Predicates;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,10 +27,53 @@ public class FlightsService {
 
     @Autowired
     private FlightRepository flightRepository;
-//    @Autowired
-//    private DatabaseInitializationDependencyConfigurer databaseInitializationDependencyConfigurer;
+
+    //Allows inyect an EntityManager that allow control the life cycle of a transaction like a search
+    @PersistenceContext
+    private EntityManager entityManager;
+
 
     //Methods
+
+    //SearchFilterMethod
+    public List<Flights> searchFlights(String cityOrigin, String destination, LocalDate departureDate, LocalTime departureTime, BigDecimal price) {
+        //Inicializate CriteriaBuilder
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Flights> query = cb.createQuery(Flights.class);
+        //Query Root
+        Root<Flights> flight = query.from(Flights.class);
+
+        //Predicates List for the filters
+        List<Predicate> predicates = new ArrayList<>();
+
+        //Optional Predicates
+        if (cityOrigin != null && !cityOrigin.trim().isEmpty()) {
+            predicates.add(cb.equal(flight.get("cityOrigin"), cityOrigin));
+        }
+        if (destination != null && !destination.trim().isEmpty()) {
+            predicates.add(cb.equal(flight.get("destination"), destination));
+        }
+
+        if (departureDate != null && !departureDate.toString().isEmpty()) {
+            predicates.add(cb.equal(flight.get("departureDate"), departureDate));
+        }
+
+        if (departureTime != null && !departureTime.toString().isEmpty()) {
+            predicates.add(cb.equal(flight.get("departureTime"), departureTime));
+        }
+
+        if(price != null && !price.toString().isEmpty()) {
+            predicates.add(cb.equal(flight.get("price"), price));
+        }
+
+        //Build the query
+        query.select(flight).where(cb.and(predicates.toArray(new Predicate[0])));
+
+        //Buil and run the TypedQuery
+        TypedQuery<Flights> typedQuery = entityManager.createQuery(query);
+        return typedQuery.getResultList();
+    }
+
     // CreateFlight
     public Flights createFlight(String cityOrigin, String destination, LocalDate departureDate, LocalTime departureTime, BigDecimal price) {
         if (cityOrigin == null || cityOrigin == "" || cityOrigin.trim().isEmpty()) {
@@ -35,7 +88,7 @@ public class FlightsService {
             throw new IllegalArgumentException("DepartureDate field cannot be empty");
         }
 
-        if (departureTime == null ) {
+        if (departureTime == null) {
             throw new IllegalArgumentException("DepartureTime field cannot be empty");
         }
 
@@ -88,7 +141,7 @@ public class FlightsService {
                 throw new IllegalArgumentException("DepartureDate field cannot be empty");
             }
 
-            if (departureTime == null ) {
+            if (departureTime == null) {
                 throw new IllegalArgumentException("DepartureTime field cannot be empty");
             }
 
@@ -141,9 +194,9 @@ public class FlightsService {
 
     public Flights getFlightByDepartureDate(LocalDate departureDate) {
         Optional<Flights> flight = flightRepository.findByDepartureDate((departureDate));
-        if(flight.isPresent()){
+        if (flight.isPresent()) {
             return flight.get();
-        }else{
+        } else {
             throw new RuntimeException("Flight with DepartureDate " + departureDate + " not found.");
         }
     }
@@ -156,6 +209,8 @@ public class FlightsService {
             throw new RuntimeException("Flight with City Origin " + price + " not found.");
         }
     }
+
+
 
 
 }

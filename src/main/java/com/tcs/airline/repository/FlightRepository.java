@@ -12,7 +12,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface FlightRepository extends JpaRepository<Flights, Integer> , JpaSpecificationExecutor<Flights> {
+//You Can use JpaSpecificationExecutor to specify an class with specification to advanced searches on this case we use CriteriaBuilder
+//public interface FlightRepository extends JpaRepository<Flights, Integer> , JpaSpecificationExecutor<Flights> {
+public interface FlightRepository extends JpaRepository<Flights, Integer>  {
     Optional<Flights> findByCityOrigin(String cityOrigin);
     Optional<Flights> findByDestination(String destination);
     Optional<Flights> findByDepartureDate(LocalDate departureDate);
