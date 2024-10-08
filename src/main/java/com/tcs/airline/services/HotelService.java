@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,20 +17,25 @@ public class HotelService {
     HotelRepository hotelRepository;
 
     //Methods
+    //Get all Hotel
+    public List<Hotel> getAllHotels() {
+        return hotelRepository.findAll();
+    }
+
     //CreateHotel
-    public Hotel registeHotel(String hotelName, String city, LocalDate checkinDate, BigDecimal pricePerNight) {
-        //Check for null or empty values in the fields
-        if (hotelName == null || hotelName == "" || hotelName.trim().isEmpty()) {
+    public Hotel registerHotel(String hotelName, String city, LocalDate checkinDate, BigDecimal pricePerNight) {
+        // Check for null or empty values in the fields
+        if (hotelName == null || hotelName.trim().isEmpty()) {
             throw new IllegalArgumentException("Hotel name cannot be empty");
         }
-        if (city == null || city == "" || city.trim().isEmpty()) {
+        if (city == null || city.trim().isEmpty()) {
             throw new IllegalArgumentException("City field cannot be empty");
         }
         if (checkinDate == null) {
-            throw new IllegalArgumentException("checkinDate field cannot be empty");
+            throw new IllegalArgumentException("Check-in date field cannot be empty");
         }
         if (pricePerNight == null || pricePerNight.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("PricePerNight field cannot be negative");
+            throw new IllegalArgumentException("Price per night cannot be negative");
         }
         Hotel hotel = new Hotel();
         hotel.setHotelName(hotelName);
@@ -38,6 +44,7 @@ public class HotelService {
         hotel.setPricePerNight(pricePerNight);
         return hotelRepository.save(hotel);
     }
+
 
     //DeleteHotelById
     public String deleteHotelById(int id) {

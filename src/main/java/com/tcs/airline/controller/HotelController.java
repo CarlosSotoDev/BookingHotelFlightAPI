@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/hotels")
@@ -17,17 +18,27 @@ public class HotelController {
     @Autowired
     private HotelService hotelService;
 
+    //Get All Hotels
+    @GetMapping
+    public List<Hotel> getAllHotels() {
+        return hotelService.getAllHotels();
+    }
+
     // Endpoint to create a new hotel
     @PostMapping
-    public ResponseEntity<Hotel> createHotel(
-            @RequestParam String hotelName,
-            @RequestParam String city,
-            @RequestParam LocalDate checkinDate,
-            @RequestParam BigDecimal pricePerNight) {
+    public ResponseEntity<Hotel> createHotel(@RequestBody Hotel hotel) {
         try {
             // Call the service to register the hotel
-            Hotel createdHotel = hotelService.registeHotel(hotelName, city, checkinDate, pricePerNight);
+            Hotel createdHotel = hotelService.registerHotel(
+                    hotel.getHotelName(),
+                    hotel.getCity(),
+                    hotel.getCheckinDate(),
+                    hotel.getPricePerNight()
+            );
             return new ResponseEntity<>(createdHotel, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            // Return a bad request response if there are validation issues
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             // Return error response in case of failure
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -51,20 +62,22 @@ public class HotelController {
     @PutMapping("/{id}")
     public ResponseEntity<String> updateHotel(
             @PathVariable int id,
-            @RequestParam String hotelName,
-            @RequestParam String city,
-            @RequestParam LocalDate checkinDate,
-            @RequestParam BigDecimal pricePerNight) {
+            @RequestBody Hotel hotelRequest) {
         try {
             // Call the service to update the hotel
-            String result = hotelService.updateHotel(id, hotelName, city, checkinDate, pricePerNight);
-            if (result.contains("was updated")) {
+            String result = hotelService.updateHotel(
+                    id, hotelRequest.getHotelName(),
+                    hotelRequest.getCity(),
+                    hotelRequest.getCheckinDate(),
+                    hotelRequest.getPricePerNight()
+            );
+            if (result.contains("successfully updated")) {
                 return new ResponseEntity<>(result, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
             }
         } catch (Exception e) {
-            // Return error response in case of failure
+            // Return an error response in case of failure
             return new ResponseEntity<>("Error updating hotel.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

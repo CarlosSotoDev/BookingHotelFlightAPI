@@ -130,6 +130,25 @@ public class FlightsService {
         Optional<Flights> flightOptional = flightRepository.findById(id);
 
         if (flightOptional.isPresent()) {
+            if (cityOrigin == null || cityOrigin == "" || cityOrigin.trim().isEmpty()) {
+                throw new IllegalArgumentException("City Origin field cannot be empty");
+            }
+
+            if (destination == null || destination == "" || destination.trim().isEmpty()) {
+                throw new IllegalArgumentException("Destination field cannot be empty");
+            }
+
+            if (departureDate == null) {
+                throw new IllegalArgumentException("DepartureDate field cannot be empty");
+            }
+
+            if (departureTime == null) {
+                throw new IllegalArgumentException("DepartureTime field cannot be empty");
+            }
+
+            if (price == null || price.compareTo(BigDecimal.ZERO) <= 0) {
+                throw new IllegalArgumentException("price cannot be empty or negative");
+            }
             Flights flight = flightOptional.get();
             flight.setCityOrigin(cityOrigin);
             flight.setDestination(destination);
