@@ -56,15 +56,13 @@ public class FlightsController {
     @PutMapping("/{id}")
     public ResponseEntity<String> updateFlight(
             @PathVariable int id,
-            @RequestParam String cityOrigin,
-            @RequestParam String destination,
-            @RequestParam LocalDate departureDate,
-            @RequestParam LocalTime departureTime,
-            @RequestParam BigDecimal price) {
+            @RequestBody Flights flightRequest) {
         try {
             // Call the service to update the flight
             String result = flightsService
-                    .updateFlight(id, cityOrigin, destination, departureDate, departureTime, price);
+                    .updateFlight(id, flightRequest.getCityOrigin(), flightRequest.getDestination(),
+                            flightRequest.getDepartureDate(), flightRequest.getDepartureTime(),
+                            flightRequest.getPrice());
             if (result.contains("successfully updated")) {
                 return new ResponseEntity<>(result, HttpStatus.OK);
             } else {
@@ -75,6 +73,7 @@ public class FlightsController {
             return new ResponseEntity<>("Error updating flight.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
     //Endpoint to shows al registers
     @GetMapping
     public List<Flights> getAllFlights() {

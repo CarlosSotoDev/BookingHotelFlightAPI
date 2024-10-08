@@ -62,7 +62,7 @@ public class FlightsService {
             predicates.add(cb.equal(flight.get("departureTime"), departureTime));
         }
 
-        if(price != null && !price.toString().isEmpty()) {
+        if (price != null && !price.toString().isEmpty()) {
             predicates.add(cb.equal(flight.get("price"), price));
         }
 
@@ -127,40 +127,21 @@ public class FlightsService {
 
     //Update Flight
     public String updateFlight(int id, String cityOrigin, String destination, LocalDate departureDate, LocalTime departureTime, BigDecimal price) {
-        Optional<Flights> flight = flightRepository.findById(id);
-        if (flight.isPresent()) {
-            if (cityOrigin == null || cityOrigin == "" || cityOrigin.trim().isEmpty()) {
-                throw new IllegalArgumentException("City Origin field cannot be empty");
-            }
+        Optional<Flights> flightOptional = flightRepository.findById(id);
 
-            if (destination == null || destination == "" || destination.trim().isEmpty()) {
-                throw new IllegalArgumentException("Destination field cannot be empty");
-            }
+        if (flightOptional.isPresent()) {
+            Flights flight = flightOptional.get();
+            flight.setCityOrigin(cityOrigin);
+            flight.setDestination(destination);
+            flight.setDepartureDate(departureDate);
+            flight.setDepartureTime(departureTime);
+            flight.setPrice(price);
 
-            if (departureDate == null) {
-                throw new IllegalArgumentException("DepartureDate field cannot be empty");
-            }
-
-            if (departureTime == null) {
-                throw new IllegalArgumentException("DepartureTime field cannot be empty");
-            }
-
-            if (price == null || price.compareTo(BigDecimal.ZERO) <= 0) {
-                throw new IllegalArgumentException("price cannot be empty");
-            }
-            Flights existingFlight = flight.get();
-            existingFlight.setCityOrigin(cityOrigin);
-            existingFlight.setDestination(destination);
-            existingFlight.setDepartureDate(departureDate);
-            existingFlight.setDepartureTime(departureTime);
-            existingFlight.setPrice(price);
-            flightRepository.save(existingFlight);
-            return "Flight with ID " + id + " successfully updated.";
+            flightRepository.save(flight);
+            return "Flight successfully updated";
         } else {
-            return "Flight with ID " + id + " not found.";
+            return "Flight not found";
         }
-
-
     }
 
     //GetAllData
@@ -214,8 +195,6 @@ public class FlightsService {
             throw new RuntimeException("Flight with City Origin " + price + " not found.");
         }
     }
-
-
 
 
 }
