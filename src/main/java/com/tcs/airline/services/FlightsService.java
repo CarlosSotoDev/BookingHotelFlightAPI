@@ -34,45 +34,56 @@ public class FlightsService {
 
 
     //Methods
-
     //SearchFilterMethod
-    public List<Flights> searchFlights(String cityOrigin, String destination, LocalDate departureDate, LocalTime departureTime, BigDecimal price) {
-        //Inicializate CriteriaBuilder
+    public List<Flights> searchFlights(String cityOrigin, String destination, LocalDate startDate, LocalDate endDate, LocalTime departureTime, BigDecimal minPrice, BigDecimal maxPrice) {
+        // Inicializar CriteriaBuilder
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Flights> query = cb.createQuery(Flights.class);
-        //Query Root
+        // Query Root
         Root<Flights> flight = query.from(Flights.class);
 
-        //Predicates List for the filters
+        // Lista de Predicados para los filtros
         List<Predicate> predicates = new ArrayList<>();
 
-        //Optional Predicates
+        // Predicados opcionales
         if (cityOrigin != null && !cityOrigin.trim().isEmpty()) {
-            predicates.add(cb.equal(flight.get("cityOrigin"), cityOrigin));
+            predicates.add(cb.like(cb.lower(flight.get("cityOrigin")), cityOrigin.toLowerCase() + "%"));
         }
         if (destination != null && !destination.trim().isEmpty()) {
-            predicates.add(cb.equal(flight.get("destination"), destination));
+            predicates.add(cb.like(cb.lower(flight.get("destination")), destination.toLowerCase() + "%"));
         }
 
-        if (departureDate != null && !departureDate.toString().isEmpty()) {
-            predicates.add(cb.equal(flight.get("departureDate"), departureDate));
+        if (startDate != null && endDate != null) {
+            predicates.add(cb.between(flight.get("departureDate"), startDate, endDate));
+        } else if (startDate != null) {
+            predicates.add(cb.greaterThanOrEqualTo(flight.get("departureDate"), startDate));
+        } else if (endDate != null) {
+            predicates.add(cb.lessThanOrEqualTo(flight.get("departureDate"), endDate));
         }
 
-        if (departureTime != null && !departureTime.toString().isEmpty()) {
+        if (departureTime != null) {
             predicates.add(cb.equal(flight.get("departureTime"), departureTime));
         }
 
-        if (price != null && !price.toString().isEmpty()) {
-            predicates.add(cb.equal(flight.get("price"), price));
+        if (minPrice != null) {
+            predicates.add(cb.greaterThanOrEqualTo(flight.get("price"), minPrice));
         }
 
-        //Build the query
+        if (maxPrice != null) {
+            predicates.add(cb.lessThanOrEqualTo(flight.get("price"), maxPrice));
+        }
+
+        // Construir la consulta
         query.select(flight).where(cb.and(predicates.toArray(new Predicate[0])));
 
-        //Buil and run the TypedQuery
+        // Construir y ejecutar la TypedQuery
         TypedQuery<Flights> typedQuery = entityManager.createQuery(query);
         return typedQuery.getResultList();
     }
+
+
+
+
 
     // CreateFlight
     public Flights createFlight(String cityOrigin, String destination, LocalDate departureDate, LocalTime departureTime, BigDecimal price) {

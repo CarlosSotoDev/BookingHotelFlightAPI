@@ -133,22 +133,24 @@ public class FlightsController {
     }
 
     //SearchForm
-    //postman try http://localhost:8080/api/v1/flights/search?destination=Paris
     @GetMapping("/search")
     public ResponseEntity<List<Flights>> searchFlights(
             @RequestParam(name = "cityOrigin", required = false) String cityOrigin,
             @RequestParam(name = "destination", required = false) String destination,
-            @RequestParam(name = "departureDate", required = false) String departureDate,
+            @RequestParam(name = "startDate", required = false) String startDate,
+            @RequestParam(name = "endDate", required = false) String endDate,
             @RequestParam(name = "departureTime", required = false) String departureTime,
-            @RequestParam(name = "price", required = false) BigDecimal price) {
+            @RequestParam(name = "minPrice", required = false) BigDecimal minPrice,
+            @RequestParam(name = "maxPrice", required = false) BigDecimal maxPrice) {
 
         try {
             // Convertir Strings a LocalDate y LocalTime si no son nulos o vacíos
-            LocalDate date = (departureDate != null && !departureDate.isEmpty()) ? LocalDate.parse(departureDate) : null;
+            LocalDate start = (startDate != null && !startDate.isEmpty()) ? LocalDate.parse(startDate) : null;
+            LocalDate end = (endDate != null && !endDate.isEmpty()) ? LocalDate.parse(endDate) : null;
             LocalTime time = (departureTime != null && !departureTime.isEmpty()) ? LocalTime.parse(departureTime) : null;
 
             // Llamar al método del servicio para obtener los vuelos
-            List<Flights> flights = flightsService.searchFlights(cityOrigin, destination, date, time, price);
+            List<Flights> flights = flightsService.searchFlights(cityOrigin, destination, start, end, time, minPrice, maxPrice);
 
             // Devolver la lista de vuelos en un ResponseEntity con estado 200 OK
             return new ResponseEntity<>(flights, HttpStatus.OK);
@@ -158,5 +160,7 @@ public class FlightsController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+
+
 
 }
