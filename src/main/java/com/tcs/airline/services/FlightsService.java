@@ -93,7 +93,7 @@ public class FlightsService {
         }
 
         if (price == null || price.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("price cannot be empty");
+            throw new IllegalArgumentException("price cannot be empty or negative");
         }
 
         Flights flight = new Flights();
@@ -163,7 +163,12 @@ public class FlightsService {
 
     }
 
-    //Look for flight by id
+    //GetAllData
+    public List<Flights> getAllFlights() {
+        return flightRepository.findAll();
+    }
+
+    //Look for flight by especifica param
     public Flights getFlightById(int id) {
         Optional<Flights> flight = flightRepository.findById(id);
         if (flight.isPresent()) {

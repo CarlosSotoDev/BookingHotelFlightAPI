@@ -74,6 +74,11 @@ public class FlightsController {
             return new ResponseEntity<>("Error updating flight.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    //Endpoint to shows al registers
+    @GetMapping
+    public List<Flights> getAllFlights() {
+        return flightsService.getAllFlights();
+    }
 
     // Endpoint to retrieve a flight by its ID
     @GetMapping("/{id}")
