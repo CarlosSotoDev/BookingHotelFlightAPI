@@ -22,18 +22,19 @@ public class FlightsController {
 
     // Endpoint to create a new flight
     @PostMapping
-    public ResponseEntity<Flights> createFlight(
-            @RequestParam String cityOrigin,
-            @RequestParam String destination,
-            @RequestParam LocalDate departureDate,
-            @RequestParam LocalTime departureTime,
-            @RequestParam BigDecimal price) {
+    public ResponseEntity<Flights> createFlight(@RequestBody Flights flight) {
         try {
-            // Call the service to create the flight
-            Flights createdFlight = flightsService.createFlight(cityOrigin, destination, departureDate, departureTime, price);
+            // Llamar al servicio para crear el vuelo
+            Flights createdFlight = flightsService.createFlight(
+                    flight.getCityOrigin(),
+                    flight.getDestination(),
+                    flight.getDepartureDate(),
+                    flight.getDepartureTime(),
+                    flight.getPrice()
+            );
             return new ResponseEntity<>(createdFlight, HttpStatus.CREATED);
         } catch (Exception e) {
-            // Return an error response in case of failure
+            // Retornar un error en caso de fallo
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
